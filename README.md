@@ -26,10 +26,11 @@ The **partitions layout** is simple and it consists of only two partitions:
 |------------------|-----------|-------------------|----------------|-------------------------|
 | 1                | ESP       | 512 MiB           | /boot/         | FAT32                   |
 | 2                | CRYPTROOT | Rest of the disk  | /              | EXT4 Encrypted (LUKS2) |
-=======
+
 
 ## Ext4 layout
 
 | volume Number | Mountpoint                    |
 |---------------|-------------------------------|
 | 1             | /                             |
+
