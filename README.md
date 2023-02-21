@@ -4,7 +4,6 @@
 - **LUKS2 encryption**: your data will live on a LUKS2 partition protected by a password
 - **Swapfile**: built in / at /.swapfile. Default is 8GB but can be changed to any size desired, just make sure to reboot after chaning the .swapfile size in /etc/fstab.
 - **Bash**: Built on bash but zsh can be installed if desired.
-- **VM additions**: we aim to provide guest tools if we detect that you're installing Arch Linux on a virtualized environment such as VMWare Workstation, VirtualBox, QEMU-KVM etc...
 - **User setup**: you'll be walked through the process of setting up a default user account with sudo permissions
 
 #### Pull
