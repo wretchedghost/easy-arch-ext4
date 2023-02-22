@@ -32,4 +32,5 @@ pacman -S deluge libreoffice-still manuskript obsidian
 
 yay -S signal-browser-bin qtbrowser caffeine-ng blueberry firefox-profile-service spotify teamviewer downgrade
 
-# AUR Them
+# AUR Theme
+yay -S vimix-icon-theme vimix vimix-gtk-themes vimix-cursors
