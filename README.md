@@ -2,6 +2,8 @@
 
 Both laptop-post-install.sh and post-install.sh are works in progress. Do not use them yet.
 
+## Details
+
 [easy-arch-ext4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with even more sane defaults.
 
 - **ext4**: Easy to work with filesystem that just works.
@@ -10,7 +12,7 @@ Both laptop-post-install.sh and post-install.sh are works in progress. Do not us
 - **Bash**: Built on bash but zsh can be installed if desired.
 - **User setup**: You'll be walked through the process of setting up a default user account with sudo permissions
 
-#### Pull
+## Pull
 
 ```bash 
 git clone https://git.wretchednet.com/wretchedghost/easy-arch-ext4
