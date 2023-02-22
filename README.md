@@ -1,10 +1,10 @@
 [easy-arch-ext4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with even more sane defaults.
 
-- **ext4**: you will have a resilient set up that will automatically takes snapshots of your volumes based on a weekly schedule
-- **LUKS2 encryption**: your data will live on a LUKS2 partition protected by a password
-- **Swapfile**: built in / at /.swapfile. Default is 8GB but can be changed to any size desired, just make sure to reboot after chaning the .swapfile size in /etc/fstab.
+- **ext4**: Easy to work with filesystem that just works.
+- **LUKS2 encryption**: Your data will live on a LUKS2 partition protected by a password
+- **Swapfile**: Built in / at /.swapfile. Default is 8GB but can be changed to any size desired, just make sure to reboot after chaning the .swapfile size in /etc/fstab.
 - **Bash**: Built on bash but zsh can be installed if desired.
-- **User setup**: you'll be walked through the process of setting up a default user account with sudo permissions
+- **User setup**: You'll be walked through the process of setting up a default user account with sudo permissions
 
 #### Pull
 
