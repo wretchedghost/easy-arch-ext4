@@ -313,14 +313,16 @@ mkdir /mnt/boot
 mount "$ESP" /mnt/boot/
 
 # Setup the swapfile
-info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
+#info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
+info_print "Setting up a swapfile. Setting size to 2GB."
 #read -r swap_response}
 #if ! [[ "${swap_response,,}" ~= '^[0-9]+$''^[0-9]+$''^[0-9]+$''^[0-9]+$''^[0-9]+$' ...];then #### Need to find solution to this part
 #error_print "Quitting."
 #    exit
 #fi
 
-dd if=/dev/zero of=/mnt/.swapfile bs=1M count=$swap_response status=progress
+#dd if=/dev/zero of=/mnt/.swapfile bs=1M count=$swap_response status=progress
+dd if=/dev/zero of=/mnt/.swapfile bs=1M count=2048 status=progress
 chmod 600 /mnt/.swapfile
 mkswap /mnt/.swapfile
 swapon /mnt/.swapfile
