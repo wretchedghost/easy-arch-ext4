@@ -258,9 +258,9 @@ echo -ne "${BOLD}${BYELLOW}
 ======================================================================
 ${RESET}"
 info_print "Welcome to easy-arch, a script made in order to simplify the process of installing Arch Linux."
+info_print "This script must be run on an EFI system. BIOS will not work. Checking now..."
 sleep 2s
 
-info_print "This script must be run on an EFI system. BIOS will not work. Checking now..."
 if [ -d /sys/firmware/efi ]; then 
     echo "System is running UEFI mode. The script will continue." 
 else 
