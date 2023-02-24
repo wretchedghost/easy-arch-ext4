@@ -258,6 +258,16 @@ echo -ne "${BOLD}${BYELLOW}
 ======================================================================
 ${RESET}"
 info_print "Welcome to easy-arch, a script made in order to simplify the process of installing Arch Linux."
+sleep 2s
+
+info_print "This script must be run on an EFI system. BIOS will not work. Checking now..."
+if [ -d /sys/firmware/efi ]; then 
+    echo "UEFI exists. The script will continue." 
+else 
+    echo "Only BIOS exists. Script will close now."
+    exit 0
+fi
+
 
 # Setting up keyboard layout.
 until keyboard_selector; do : ; done
