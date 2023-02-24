@@ -29,6 +29,32 @@ error_print () {
     echo -e "${BOLD}${BRED}[ ${BBLUE}•${BRED} ] $1${RESET}"
 }
 
+# Virtualization check (function). 
+virt_check () {     
+    hypervisor=$(systemd-detect-virt)     
+    case $hypervisor in         
+        kvm )   info_print "KVM has been detected, setting up guest tools."                 
+            pacstrap /mnt qemu-guest-agent &>/dev/null                 
+            systemctl enable qemu-guest-agent --root=/mnt &>/dev/null                 
+            ;;         
+        vmware  )   info_print "VMWare Workstation/ESXi has been detected, setting up guest tools."                     
+            pacstrap /mnt open-vm-tools >/dev/null                     
+            systemctl enable vmtoolsd --root=/mnt &>/dev/null                     
+            systemctl enable vmware-vmblock-fuse --root=/mnt &>/dev/null                     
+            ;;         
+        oracle )    info_print "VirtualBox has been detected, setting up guest tools."                     
+            pacstrap /mnt virtualbox-guest-utils &>/dev/null                     
+            systemctl enable vboxservice --root=/mnt &>/dev/null                     
+            ;;         
+        microsoft ) info_print "Hyper-V has been detected, setting up guest tools."                     
+            pacstrap /mnt hyperv &>/dev/null                     
+            systemctl enable hv_fcopy_daemon --root=/mnt &>/dev/null                     
+            systemctl enable hv_kvp_daemon --root=/mnt &>/dev/null                     
+            systemctl enable hv_vss_daemon --root=/mnt &>/dev/null                     
+            ;;     
+    esac 
+}
+
 # Selecting a kernel to install (function).
 kernel_selector () {
     info_print "List of kernels:"
@@ -74,20 +100,20 @@ network_installer () {
     case $network_choice in
         1 ) info_print "Installing and enabling IWD."
             pacstrap /mnt iwd >/dev/null
-            systemctl enable iwd --root=/mnt &>/dev/null
+            systemctl enable iwd --root=/mnt &> /dev/null
             ;;
         2 ) info_print "Installing and enabling NetworkManager."
-            pacstrap /mnt networkmanager >/dev/null
-            systemctl enable NetworkManager --root=/mnt &>/dev/null
+            pacstrap /mnt networkmanager > /dev/null
+            systemctl enable NetworkManager --root=/mnt &> /dev/null
             ;;
         3 ) info_print "Installing and enabling wpa_supplicant and dhcpcd."
-            pacstrap /mnt wpa_supplicant dhcpcd >/dev/null
-            systemctl enable wpa_supplicant --root=/mnt &>/dev/null
-            systemctl enable dhcpcd --root=/mnt &>/dev/null
+            pacstrap /mnt wpa_supplicant dhcpcd > /dev/null
+            systemctl enable wpa_supplicant --root=/mnt &> /dev/null
+            systemctl enable dhcpcd --root=/mnt &> /dev/null
             ;;
         4 ) info_print "Installing dhcpcd."
             pacstrap /mnt dhcpcd >/dev/null
-            systemctl enable dhcpcd --root=/mnt &>/dev/null
+            systemctl enable dhcpcd --root=/mnt &> /dev/null
     esac
 }
 
@@ -331,8 +357,10 @@ swapon /mnt/.swapfile
 microcode_detector
 
 # Pacstrap (setting up a base sytem onto the new root).
-info_print "Installing the base system (it may take a while)."
-pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch networkmanager bash-completion &> /dev/null
+info_print "Installing the base system (this may take a while)."
+sleep 3s
+#pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch networkmanager bash-completion &> /dev/null
+pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch bash-completion 
 
 # Setting up the hostname.
 echo "$hostname" > /mnt/etc/hostname
@@ -342,7 +370,8 @@ info_print "Generating a new fstab."
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # Setup tmpfs in /mnt/etc/fstab.
-info_print "Generating a tmpfs with the size of 8G. This size can be changed at anytime but please perform an reboot after the change to make sure things don't get wonky. noatime is disable as default as this is not preferred to have enabled with an NVMe drive. For a SSD you SHOULD enable noatime.
+info_print "Generating a tmpfs with the size of 8G. This size can be changed at anytime but please perform an reboot after the change to make sure things don't get wonky. noatime is disable as default as this is not preferred to have enabled with an NVMe drive. For a SSD you SHOULD enable noatime."
+sleep 3s
 echo "tmpfs /tmp    tmpfs   rw,nodev,nosuid,size=8G,mode=1700 0 0" >> /mnt/etc/fstab
 
 # Configure selected locale and console keymap
@@ -358,13 +387,17 @@ cat > /mnt/etc/hosts <<EOF
 127.0.1.1   $hostname.localdomain   $hostname
 EOF
 
+# Virtualization check.
+virt_check
+
 # Setting up the network.
 network_installer
 
 # Configuring /etc/mkinitcpio.conf.
 info_print "Configuring /etc/mkinitcpio.conf."
 cat > /mnt/etc/mkinitcpio.conf <<EOF
-HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)
+#HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)
+HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems)
 EOF
 
 # Setting up LUKS2 encryption in grub.
@@ -377,7 +410,7 @@ info_print "Configuring the system (timezone, system clock, initramfs, GRUB)."
 arch-chroot /mnt /bin/bash -e <<EOF
 
     # Setting up timezone.
-    ln -sf /usr/share/zoneinfo/$(curl -s http://ip-api.com/line?fields=timezone) /etc/localtime &>/dev/null
+    ln -sf /usr/share/zoneinfo/$(curl -s http://ip-api.com/line?fields=timezone) /etc/localtime &> /dev/null
 
     # Setting up clock.
     hwclock --systohc
