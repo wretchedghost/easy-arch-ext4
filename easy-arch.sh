@@ -262,9 +262,9 @@ sleep 2s
 
 info_print "This script must be run on an EFI system. BIOS will not work. Checking now..."
 if [ -d /sys/firmware/efi ]; then 
-    echo "UEFI exists. The script will continue." 
+    echo "System is running UEFI mode. The script will continue." 
 else 
-    echo "Only BIOS exists. Script will close now."
+    echo "System is running in BIOS mode. Script will close now."
     exit 0
 fi
 
