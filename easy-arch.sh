@@ -237,7 +237,7 @@ info_print "Welcome to easy-arch, a script made in order to simplify the process
 until keyboard_selector; do : ; done
 
 # Set up time
-timedatctl set-ntp true
+timedatectl set-ntp true
 
 # Choosing the target for the installation.
 info_print "Available disks for the installation:"
@@ -309,6 +309,7 @@ info_print "Formatting the LUKS container as EXT4."
 mkfs.ext4 "$fs_ext4" &> /dev/null
 mount "$fs_ext4" /mnt
 
+mkdir /mnt/boot
 mount "$ESP" /mnt/boot/
 
 # Setup the swapfile
@@ -329,7 +330,7 @@ microcode_detector
 
 # Pacstrap (setting up a base sytem onto the new root).
 info_print "Installing the base system (it may take a while)."
-pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch networkmanager bash-completion &>/dev/null
+pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch networkmanager bash-completion &> /dev/null
 
 # Setting up the hostname.
 echo "$hostname" > /mnt/etc/hostname
