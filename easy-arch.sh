@@ -409,22 +409,22 @@ info_print "Configuring the system (timezone, system clock, initramfs, GRUB)."
 arch-chroot /mnt /bin/bash -e <<EOF
 
     # Setting up timezone.
-    ln -sf /usr/share/zoneinfo/$(curl -s http://ip-api.com/line?fields=timezone) /etc/localtime &> /dev/null
+    ln -sf /usr/share/zoneinfo/$(curl -s http://ip-api.com/line?fields=timezone) /etc/localtime 
 
     # Setting up clock.
     hwclock --systohc
 
     # Generating locales.
-    locale-gen &> /dev/null
+    locale-gen 
 
     # Generating a new initramfs.
-    mkinitcpio -P &> /dev/null
+    mkinitcpio -P 
 
     # Installing GRUB.
-    grub-install --target=x86_64-efi --efi-directory=/boot/ --bootloader-id=GRUB &> /dev/null
+    grub-install --target=x86_64-efi --efi-directory=/boot/ --bootloader-id=GRUB
 
     # Creating grub config file.
-    grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+    grub-mkconfig -o /boot/grub/grub.cfg
 
 EOF
 
