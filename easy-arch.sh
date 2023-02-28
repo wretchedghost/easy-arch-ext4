@@ -420,7 +420,7 @@ EOF
 # Setting up LUKS2 encryption in grub.
 info_print "Setting up grub config."
 UUID=$(blkid -s UUID -o value $CRYPTROOT)
-sed -i "\,^GRUB_CMDLINE_LINUX=\"\",s,\",&rd.luks.name=$UUID=cryptroot root=$fs_ext4," /mnt/etc/default/grub
+sed -i "\,^GRUB_CMDLINE_LINUX=\"\",s,\",&cryptdevice=UUID=$UUID:cryptroot," /mnt/etc/default/grub
 
 # Configuring the system.
 info_print "Configuring the system (timezone, system clock, initramfs, GRUB)."
