@@ -406,7 +406,15 @@ network_installer
 # Configuring /etc/mkinitcpio.conf.
 info_print "Configuring /etc/mkinitcpio.conf."
 cat > /mnt/etc/mkinitcpio.conf <<EOF
+
+MODULES=()
+
+BINARIES=()
+
+FILES=()
+
 HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems)
+
 EOF
 
 # Setting up LUKS2 encryption in grub.
