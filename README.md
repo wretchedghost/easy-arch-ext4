@@ -1,7 +1,3 @@
-#### Work in progress
-
-Both laptop-post-install.sh and post-install.sh are works in progress. Do not use them yet.
-
 ## Details
 
 [easy-arch-ext4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with even more sane defaults.
