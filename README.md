@@ -55,4 +55,5 @@ The **partitions layout** is simple and it consists of only two partitions:
 |               | /tmp                          |
 
 ## Still Needs to be Completed
+
 1. I am still working on the syntax to take the amount of space desired by the user for `/.swapfile` and `/tmp`.
