@@ -1,5 +1,14 @@
 ## Details
 
+======================================================================
+███████╗ █████╗ ███████╗██╗   ██╗      █████╗ ██████╗  ██████╗██╗  ██╗ 
+██╔════╝██╔══██╗██╔════╝╚██╗ ██╔╝     ██╔══██╗██╔══██╗██╔════╝██║  ██║
+█████╗  ███████║███████╗ ╚████╔╝█████╗███████║██████╔╝██║     ███████║
+██╔══╝  ██╔══██║╚════██║  ╚██╔╝ ╚════╝██╔══██║██╔══██╗██║     ██╔══██║
+███████╗██║  ██║███████║   ██║        ██║  ██║██║  ██║╚██████╗██║  ██║
+╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝        ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝
+======================================================================
+
 I prefer a more simplified setup than using systemd as a bootloader. I am also not hip enough to use `btrfs` so I will stick with the simple yet rock solid `ext4`.
 
 [Easy-Arch-EXT4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with very sane defaults.
