@@ -348,6 +348,9 @@ mount "$fs_ext4" /mnt
 mkdir /mnt/boot
 mount "$ESP" /mnt/boot/
 
+# Checking the microcode to install.
+microcode_detector
+
 # Setup the swapfile
 #info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
 info_print "Setting up a swapfile. Setting size to 2GB."
@@ -363,14 +366,11 @@ chmod 600 /mnt/.swapfile
 mkswap /mnt/.swapfile
 swapon /mnt/.swapfile
 
-# Checking the microcode to install.
-microcode_detector
-
 # Pacstrap (setting up a base sytem onto the new root).
 info_print "Installing the base system (this may take a while)."
 sleep 3s
 #pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch networkmanager bash-completion &> /dev/null
-pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch bash-completion 
+pacstrap -K /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch bash-completion 
 
 # Setting up the hostname.
 echo "$hostname" > /mnt/etc/hostname
@@ -406,7 +406,6 @@ network_installer
 # Configuring /etc/mkinitcpio.conf.
 info_print "Configuring /etc/mkinitcpio.conf."
 cat > /mnt/etc/mkinitcpio.conf << EOF
-
 MODULES=()
 
 BINARIES=()
@@ -414,7 +413,6 @@ BINARIES=()
 FILES=()
 
 HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)
-
 EOF
 
 # Setting up LUKS2 encryption in grub.
@@ -424,25 +422,25 @@ sed -i "\,^GRUB_CMDLINE_LINUX=\"\",s,\",&cryptdevice=UUID=$UUID:cryptroot," /mnt
 
 # Configuring the system.
 info_print "Configuring the system (timezone, system clock, initramfs, GRUB)."
-arch-chroot /mnt /bin/bash -e <<EOF
+arch-chroot /mnt /bin/bash -e << EOF
 
     # Setting up timezone.
-    ln -sf /usr/share/zoneinfo/$(curl -s http://ip-api.com/line?fields=timezone) /etc/localtime 
+    ln -sf /usr/share/zoneinfo/$(curl -s http://ip-api.com/line?fields=timezone) /etc/localtime &>/dev/null
 
     # Setting up clock.
     hwclock --systohc
 
     # Generating locales.
-    locale-gen &> /dev/null
+    locale-gen &>/dev/null
 
     # Generating a new initramfs.
-    mkinitcpio -P &> /dev/null
+    mkinitcpio -P &>/dev/null
 
     # Installing GRUB.
-    grub-install --target=x86_64-efi --efi-directory=/boot/ --bootloader-id=ARCHLINUX &> /dev/null
+    grub-install --target=x86_64-efi --efi-directory=/boot/ --bootloader-id=ARCHLINUX &>/dev/null
 
     # Creating grub config file.
-    grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
+    grub-mkconfig -o /boot/grub/grub.cfg &>/dev/null
 
 EOF
 
