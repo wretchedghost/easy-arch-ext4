@@ -405,7 +405,7 @@ network_installer
 
 # Configuring /etc/mkinitcpio.conf.
 info_print "Configuring /etc/mkinitcpio.conf."
-cat > /mnt/etc/mkinitcpio.conf <<EOF
+cat > /mnt/etc/mkinitcpio.conf << EOF
 
 MODULES=()
 
@@ -413,7 +413,7 @@ BINARIES=()
 
 FILES=()
 
-HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems)
+HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)
 
 EOF
 
@@ -433,16 +433,16 @@ arch-chroot /mnt /bin/bash -e <<EOF
     hwclock --systohc
 
     # Generating locales.
-    locale-gen 
+    locale-gen &> /dev/null
 
     # Generating a new initramfs.
-    mkinitcpio -P 
+    mkinitcpio -P &> /dev/null
 
     # Installing GRUB.
-    grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=GRUB
+    grub-install --target=x86_64-efi --efi-directory=/boot/ --bootloader-id=ARCHLINUX &> /dev/null
 
     # Creating grub config file.
-    grub-mkconfig -o /boot/grub/grub.cfg
+    grub-mkconfig -o /boot/grub/grub.cfg &> /dev/null
 
 EOF
 
