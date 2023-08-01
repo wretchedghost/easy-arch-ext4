@@ -246,12 +246,6 @@ keyboard_selector () {
     esac
 }
 
-# Function to tell the user why the script exited.
-#die() {
-#    (($#)) && printf >&2 '%s\n' "$@"
-#    exit 1
-#}
-
 # Welcome screen.
 echo -ne "${BOLD}${BYELLOW}
 =============================================================================================================
@@ -363,10 +357,7 @@ sleep 1s
 while :; do
     read -ep 'Swapfile Size: ' swap_response
     [[ $swap_response =~ ^[[:digit:]]+$ ]] || continue
-    #[[ $swap_response =~ ^[[:digit:]]+$ ]] || 
-    #    die '*** Error: you should have entered a number'
     (( ( (swap_response=(10#$swap_response)) <= 99999 ) && swap_response >= 0 )) || continue
-    #    die '*** Error, number not in range of 1..99999'
     break
 done
 
