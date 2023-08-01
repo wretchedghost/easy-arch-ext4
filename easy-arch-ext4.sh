@@ -246,6 +246,12 @@ keyboard_selector () {
     esac
 }
 
+# Function to tell the user why the script exited.
+die() {
+    (($#)) && printf >&2 '%s\n' "$@"
+    exit 1
+}
+
 # Welcome screen.
 echo -ne "${BOLD}${BYELLOW}
 =============================================================================================================
@@ -352,16 +358,20 @@ mount "$ESP" /mnt/boot/
 microcode_detector
 
 # Setup the swapfile
-#info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
-info_print "Setting up a swapfile. Setting size to 2GB."
-#read -r swap_response}
-#if ! [[ "${swap_response,,}" ~= '^[0-9]+$''^[0-9]+$''^[0-9]+$''^[0-9]+$''^[0-9]+$' ...];then #### Need to find solution to this part
-#error_print "Quitting."
-#    exit
-#fi
+info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
+sleep 3s
+while :; do
+    read -ep 'Swapfile Size: ' swap_response
+    #[[ $swap_response =~ ^[[:digit:]]+$ ]] || exit 1
+    [[ $swap_response =~ ^[[:digit:]]+$ ]] || 
+        die '*** Error: you should have entered a number'
+    (( ( (number=(10#$swap_response)) <= 99999 ) && number >= 0 )) || exit 1
+        die '*** Error, number not in range of 1..99999'
+    break
+done
 
 #dd if=/dev/zero of=/mnt/.swapfile bs=1M count=$swap_response status=progress
-dd if=/dev/zero of=/mnt/.swapfile bs=1M count=2048 status=progress
+dd if=/dev/zero of=/mnt/.swapfile bs=1M count=$swap_response status=progress
 chmod 600 /mnt/.swapfile
 mkswap /mnt/.swapfile
 swapon /mnt/.swapfile
@@ -369,7 +379,6 @@ swapon /mnt/.swapfile
 # Pacstrap (setting up a base sytem onto the new root).
 info_print "Installing the base system (this may take a while)."
 sleep 3s
-#pacstrap /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch networkmanager bash-completion &> /dev/null
 pacstrap -K /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch bash-completion 
 
 # Setting up the hostname.
@@ -380,7 +389,7 @@ info_print "Generating a new fstab."
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # Setup tmpfs in /mnt/etc/fstab.
-info_print "Generating a tmpfs with the size of 8G. This size can be changed at anytime but please perform an reboot after the change to make sure things don't get wonky. noatime is disable as default as this is not preferred to have enabled with an NVMe drive. For a SSD you SHOULD enable noatime."
+info_print "Generating a tmpfs with the size of 8G. This size can be changed at anytime but please perform a reboot after the change to make sure things don't get wonky. noatime is disabled as default as this is not preferred to have enabled with an NVMe drive. For a SSD you SHOULD enable noatime."
 sleep 3s
 echo "tmpfs /tmp    tmpfs   rw,nodev,nosuid,size=8G,mode=1700 0 0" >> /mnt/etc/fstab
 
