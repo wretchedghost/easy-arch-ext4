@@ -247,10 +247,10 @@ keyboard_selector () {
 }
 
 # Function to tell the user why the script exited.
-die() {
-    (($#)) && printf >&2 '%s\n' "$@"
-    exit 1
-}
+#die() {
+#    (($#)) && printf >&2 '%s\n' "$@"
+#    exit 1
+#}
 
 # Welcome screen.
 echo -ne "${BOLD}${BYELLOW}
@@ -359,14 +359,14 @@ microcode_detector
 
 # Setup the swapfile
 info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
-sleep 3s
+sleep 1s
 while :; do
     read -ep 'Swapfile Size: ' swap_response
-    #[[ $swap_response =~ ^[[:digit:]]+$ ]] || exit 1
-    [[ $swap_response =~ ^[[:digit:]]+$ ]] || 
-        die '*** Error: you should have entered a number'
-    (( ( (swap_response=(10#$swap_response)) <= 99999 ) && swap_response >= 0 )) || exit 1
-        die '*** Error, number not in range of 1..99999'
+    [[ $swap_response =~ ^[[:digit:]]+$ ]] || continue
+    #[[ $swap_response =~ ^[[:digit:]]+$ ]] || 
+    #    die '*** Error: you should have entered a number'
+    (( ( (swap_response=(10#$swap_response)) <= 99999 ) && swap_response >= 0 )) || continue
+    #    die '*** Error, number not in range of 1..99999'
     break
 done
 
