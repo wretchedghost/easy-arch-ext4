@@ -51,11 +51,11 @@ The **partitions layout** is simple and it consists of only two partitions:
 
 ## Ext4 layout
 
-| volume Number | Mountpoint                    |
+| Volume Number | Mountpoint                    |
 |---------------|-------------------------------|
 | 1             | /                             |
-|               | /.swapfile                    |
-|               | /tmp                          |
+| 1.a           | /.swapfile                    |
+| 1.b           | /tmp                          |
 
 ## Still Needs to be Completed
 
