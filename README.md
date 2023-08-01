@@ -10,12 +10,13 @@
 ╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝        ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝      ╚══════╝╚═╝  ╚═╝   ╚═╝        ╚═╝
 =============================================================================================================
 ```
- 
-I prefer a more simplified setup than using systemd as a bootloader. I am also not hip enough to use `btrfs` so I will stick with the simple yet rock solid `ext4`.
+This is a fork of classy-giraffe's easy-arch script that can be found here: [https://github.com/classy-giraffe/easy-arch](https://github.com/classy-giraffe/easy-arch). I prefer to use a more simplified setup than by using `GRUB2` rather than `systemd` as a bootloader. I am also not hip enough to use `btrfs` so I will stick with the simple yet rock solid `ext4`.
 
-[Easy-Arch-EXT4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with very sane defaults.
+[Easy-Arch-EXT4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with ***very*** sane defaults.
 
 #### What this script uses to install Arch Linux
+
+- **UEFI or EFI ONLY**
 
 - **ext4**: Easy to work with filesystem that just works. Though you will not have the fancy backups and restore features like `btrfs`.
 - **LUKS2 encryption**: Your data will live on a LUKS2 partition protected by a password while at rest.
@@ -33,6 +34,8 @@ cd easy-arch-ext4
 chmod +x easy-arch.sh
 bash easy-arch.sh
 ```
+
+Read through my code if you want before blindly running the script.
 
 ## Partitions layout 
 
