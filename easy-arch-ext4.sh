@@ -6,7 +6,7 @@
 # Cleaning the TTY.
 clear
 
-# Cosmetics (colours for text).
+# Cosmetics (colors for text).
 BOLD='\e[1m'
 BRED='\e[91m'
 BBLUE='\e[34m'  
@@ -458,7 +458,7 @@ if [[ -n "$username" ]]; then
 fi
 
 # Pacman eye-candy features.
-info_print "Enabling colours, animations, and parallel downloads for pacman."
+info_print "Enabling colors, animations, and parallel downloads for pacman."
 sed -Ei 's/^#(Color)$/\1\nILoveCandy/;s/^#(ParallelDownloads).*/\1 = 10/' /mnt/etc/pacman.conf
 
 # Finishing up.
