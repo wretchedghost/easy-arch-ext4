@@ -20,7 +20,7 @@ This is a fork of classy-giraffe's easy-arch script that can be found here: [htt
 
 - **ext4**: Easy to work with filesystem that just works. Though you will not have the fancy backups and restore features like `btrfs`.
 - **LUKS2 encryption**: Your data will live on a LUKS2 partition protected by a password while at rest.
-- **Swapfile**: Built in `/` at `/.swapfile`. Default is 2GB but can be changed to any size desired by editing the easy-arch-ext4.sh file or in `/etc/fstab` post install, just make sure to reboot after changing the /.swapfile size.
+- **Swapfile**: Built in `/` at `/.swapfile`. Allows user to create a swapfile in any size they want from 1MB to 99999MB.
 - **Bash**: Built on `bash` but `zsh` can be installed and used a default if desired.
 - **User setup**: You'll be walked through the process of setting up a default user account with sudo permissions.
 - **Tmpfs directory**: A tmpfs partition will be created at `/tmp` with the size of 8G. This can be changed by editing the easy-arch-ext4.sh file"
@@ -56,7 +56,3 @@ The **partitions layout** is simple and it consists of only two partitions:
 | 1             | /                             |
 | 1.a           | /.swapfile                    |
 | 1.b           | /tmp                          |
-
-## Still Needs to be Completed
-
-1. I am still working on the syntax to take the amount of space desired by the user for `/.swapfile` and `/tmp`.
