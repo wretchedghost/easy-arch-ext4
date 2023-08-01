@@ -365,7 +365,7 @@ while :; do
     #[[ $swap_response =~ ^[[:digit:]]+$ ]] || exit 1
     [[ $swap_response =~ ^[[:digit:]]+$ ]] || 
         die '*** Error: you should have entered a number'
-    (( ( (number=(10#$swap_response)) <= 99999 ) && number >= 0 )) || exit 1
+    (( ( (swap_response=(10#$swap_response)) <= 99999 ) && swap_response >= 0 )) || exit 1
         die '*** Error, number not in range of 1..99999'
     break
 done
