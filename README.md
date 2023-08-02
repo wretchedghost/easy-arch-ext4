@@ -10,7 +10,7 @@
 ╚══════╝╚═╝  ╚═╝╚══════╝   ╚═╝        ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝╚═╝  ╚═╝      ╚══════╝╚═╝  ╚═╝   ╚═╝        ╚═╝
 =============================================================================================================
 ```
-This is a fork of classy-giraffe's easy-arch script that can be found here: [https://github.com/classy-giraffe/easy-arch](https://github.com/classy-giraffe/easy-arch). I prefer to use a more simplified setup than by using `GRUB2` rather than `systemd` as a bootloader. I am also not hip enough to use `btrfs` so I will stick with the simple yet rock solid `ext4`.
+This is a fork of classy-giraffe's easy-arch script that can be found here: [https://github.com/classy-giraffe/easy-arch](https://github.com/classy-giraffe/easy-arch). I prefer to use a more simplified setup by using `GRUB2` rather than `systemd` as a bootloader. I am also not hip enough to use `btrfs` so I will stick with the simple yet rock solid `ext4`.
 
 [Easy-Arch-EXT4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with ***very*** sane defaults.
 
