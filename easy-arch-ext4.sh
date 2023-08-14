@@ -398,7 +398,7 @@ cat > /mnt/etc/hosts <<EOF
 EOF
 
 # Virtualization check.
-virt_check
+#virt_check
 
 # Setting up the network.
 network_installer

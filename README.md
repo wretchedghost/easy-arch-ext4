@@ -12,6 +12,8 @@
 ```
 This is a fork of classy-giraffe's easy-arch script that can be found here: [https://github.com/classy-giraffe/easy-arch](https://github.com/classy-giraffe/easy-arch). I prefer to use a more simplified setup by using `GRUB2` rather than `systemd` as a bootloader. I am also not hip enough to use `btrfs` so I will stick with the simple yet rock solid `ext4`.
 
+> Bug error: If you are running on a virtual machine then make sure to uncomment the virt_check function that is run. I had to disable it due to it getting hung up on hardware. For now the virt_check func will be commented.
+
 [Easy-Arch-EXT4](https://git.wretchednet.com/wretchedghost/easy-arch-ext4) is a **bash script** that boostraps [Arch Linux](https://archlinux.org/) with ***very*** sane defaults.
 
 #### What this script uses to install Arch Linux
