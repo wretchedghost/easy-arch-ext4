@@ -405,13 +405,7 @@ network_installer
 
 # Configuring /etc/mkinitcpio.conf.
 info_print "Configuring /etc/mkinitcpio.conf."
-cat > /mnt/etc/mkinitcpio.conf << EOF
-MODULES=()
-
-BINARIES=()
-
-FILES=()
-
+cat > /mnt/etc/mkinitcpio.conf <<EOF
 HOOKS=(base udev autodetect keyboard modconf block encrypt filesystems fsck)
 EOF
 
