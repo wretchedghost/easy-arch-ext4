@@ -34,23 +34,23 @@ virt_check () {
     hypervisor=$(systemd-detect-virt)     
     case $hypervisor in         
         kvm )   info_print "KVM has been detected, setting up guest tools."                 
-            pacstrap /mnt qemu-guest-agent &> /dev/null                 
-            systemctl enable qemu-guest-agent --root=/mnt &> /dev/null                 
+            pacstrap /mnt qemu-guest-agent &>/dev/null                 
+            systemctl enable qemu-guest-agent --root=/mnt &>/dev/null                 
             ;;         
         vmware  )   info_print "VMWare Workstation/ESXi has been detected, setting up guest tools."                     
-            pacstrap /mnt open-vm-tools > /dev/null                     
-            systemctl enable vmtoolsd --root=/mnt &> /dev/null                     
-            systemctl enable vmware-vmblock-fuse --root=/mnt &> /dev/null                     
+            pacstrap /mnt open-vm-tools >/dev/null                     
+            systemctl enable vmtoolsd --root=/mnt &>/dev/null                     
+            systemctl enable vmware-vmblock-fuse --root=/mnt &>/dev/null                     
             ;;         
         oracle )    info_print "VirtualBox has been detected, setting up guest tools."                     
-            pacstrap /mnt virtualbox-guest-utils &> /dev/null                     
-            systemctl enable vboxservice --root=/mnt &> /dev/null                     
+            pacstrap /mnt virtualbox-guest-utils &>/dev/null                     
+            systemctl enable vboxservice --root=/mnt &>/dev/null                     
             ;;         
         microsoft ) info_print "Hyper-V has been detected, setting up guest tools."                     
-            pacstrap /mnt hyperv &> /dev/null                     
-            systemctl enable hv_fcopy_daemon --root=/mnt &> /dev/null                     
-            systemctl enable hv_kvp_daemon --root=/mnt &> /dev/null                     
-            systemctl enable hv_vss_daemon --root=/mnt &> /dev/null                     
+            pacstrap /mnt hyperv &>/dev/null                     
+            systemctl enable hv_fcopy_daemon --root=/mnt &>/dev/null                     
+            systemctl enable hv_kvp_daemon --root=/mnt &>/dev/null                     
+            systemctl enable hv_vss_daemon --root=/mnt &>/dev/null                     
             ;;     
     esac 
 }
@@ -99,21 +99,21 @@ network_selector () {
 network_installer () {
     case $network_choice in
         1 ) info_print "Installing and enabling IWD."
-            pacstrap /mnt iwd > /dev/null
-            systemctl enable iwd --root=/mnt &> /dev/null
+            pacstrap /mnt iwd >/dev/null
+            systemctl enable iwd --root=/mnt &>/dev/null
             ;;
         2 ) info_print "Installing and enabling NetworkManager."
-            pacstrap /mnt networkmanager > /dev/null
-            systemctl enable NetworkManager --root=/mnt &> /dev/null
+            pacstrap /mnt networkmanager >/dev/null
+            systemctl enable NetworkManager --root=/mnt &>/dev/null
             ;;
         3 ) info_print "Installing and enabling wpa_supplicant and dhcpcd."
-            pacstrap /mnt wpa_supplicant dhcpcd > /dev/null
-            systemctl enable wpa_supplicant --root=/mnt &> /dev/null
-            systemctl enable dhcpcd --root=/mnt &> /dev/null
+            pacstrap /mnt wpa_supplicant dhcpcd >/dev/null
+            systemctl enable wpa_supplicant --root=/mnt &>/dev/null
+            systemctl enable dhcpcd --root=/mnt &>/dev/null
             ;;
         4 ) info_print "Installing dhcpcd."
-            pacstrap /mnt dhcpcd > /dev/null
-            systemctl enable dhcpcd --root=/mnt &> /dev/null
+            pacstrap /mnt dhcpcd >/dev/null
+            systemctl enable dhcpcd --root=/mnt &>/dev/null
     esac
 }
 
@@ -312,8 +312,8 @@ if ! [[ "${disk_response,,}" =~ ^(yes|y)$ ]]; then
     exit
 fi
 info_print "Wiping $DISK."
-wipefs -af "$DISK" &> /dev/null
-sgdisk -Zo "$DISK" &> /dev/null
+wipefs -af "$DISK" &>/dev/null
+sgdisk -Zo "$DISK" &>/dev/null
 
 # Creating a new partition scheme.
 info_print "Creating the partitions on $DISK."
@@ -332,17 +332,17 @@ partprobe "$DISK"
 
 # Formatting the ESP as FAT32.
 info_print "Formatting the EFI Partition as vFAT32."
-mkfs.vfat -F32 "$ESP" &> /dev/null
+mkfs.vfat -F32 "$ESP" &>/dev/null
 
 # Creating a LUKS Container for the root partition.
 info_print "Creating LUKS Container for the root partition."
-echo -n "$password" | cryptsetup luksFormat "$CRYPTROOT" -d - &> /dev/null
+echo -n "$password" | cryptsetup luksFormat "$CRYPTROOT" -d - &>/dev/null
 echo -n "$password" | cryptsetup open "$CRYPTROOT" cryptroot -d - 
 fs_ext4="/dev/mapper/cryptroot"
 
 # Formatting the LUKS Container as EXT4.
 info_print "Formatting the LUKS container as EXT4."
-mkfs.ext4 "$fs_ext4" &> /dev/null
+mkfs.ext4 "$fs_ext4" &>/dev/null
 mount "$fs_ext4" /mnt
 
 mkdir /mnt/boot
