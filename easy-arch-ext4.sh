@@ -352,7 +352,7 @@ mount "$ESP" /mnt/boot/
 microcode_detector
 
 # Setup the swapfile
-info_print "Setting up a swapfile. What size do you want in MB? (ie 24576 = 24G or 32768 = 32G)"
+info_print "Setting up a swapfile. What size do you want in MB? (ie 16384 = 16G, 24576 = 24G, or 32768 = 32G)"
 sleep 1s
 while :; do
     read -ep 'Swapfile Size: ' swap_response
@@ -451,9 +451,11 @@ if [[ -n "$username" ]]; then
     echo "$username:$userpass" | arch-chroot /mnt chpasswd
 fi
 
-# Pacman eye-candy features.
+# Pacman eye-candy features and multilib.
 info_print "Enabling colors, animations, and parallel downloads for pacman."
 sed -Ei 's/^#(Color)$/\1\nILoveCandy/;s/^#(ParallelDownloads).*/\1 = 10/' /mnt/etc/pacman.conf
+
+printf '[multilib]\nInclude = /etc/pacman.d/mirrorlist' >> /mnt/etc/pacman.conf
 
 # Finishing up.
 info_print "Done, you may now wish to reboot (further changes can be done by chrooting into /mnt)."
