@@ -278,7 +278,7 @@ timedatectl set-ntp true
 # Choosing the target for the installation.
 info_print "Available disks for the installation:"
 PS3="Please select the number of the corresponding disk (e.g. 1): "
-select ENTRY in $(lsblk -dpnoNAME|grep -P "/dev/sd|nvme|vd");
+select ENTRY in $(lsblk -dpnoNAME|grep -P "/dev/sd|nvme|vd|mmc");
 do
     DISK="$ENTRY"
     info_print "Arch Linux will be installed on the following disk: $DISK"
