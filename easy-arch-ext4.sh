@@ -593,9 +593,7 @@ fi
 
 # Configuring the system.
 info_print "Configuring the system (timezone, system clock, initramfs, GRUB)."
-if ! arch-chroot /mnt /bin/bash -e << EOF; then
-    critical_error "Failed to configure system in chroot"
-fi
+arch-chroot /mnt /bin/bash -e << EOF
 
     # Setting up timezone.
     $(declare -f setup_timezone)
@@ -618,10 +616,8 @@ fi
 
 EOF
 
-# Setting root password.
-info_print "Setting root password."
-if ! echo "root:$rootpass" | arch-chroot /mnt chpasswd; then
-    critical_error "Failed to set root password"
+if [ $? -ne 0 ]; then
+    critical_error "Failed to configure system in chroot"
 fi
 
 # Setting user password.
