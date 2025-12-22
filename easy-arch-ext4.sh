@@ -340,7 +340,7 @@ preflight_checks () {
     fi
     
     # Check if all required packages are available
-    local base_packages=("base" "linux-firmware" "grub" "rsync" "efibootmgr" "sudo" "vim" "git" "neofetch" "bash-completion")
+    local base_packages=("base" "linux-firmware" "grub" "rsync" "efibootmgr" "sudo" "vim" "git" "fastfetch" "bash-completion")
     if ! check_packages "${base_packages[@]}"; then
         error_print "Some required packages are not available"
         return 1
@@ -520,7 +520,7 @@ fi
 # Pacstrap (setting up a base sytem onto the new root).
 info_print "Installing the base system (this may take a while)."
 sleep 3s
-if ! pacstrap -K /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git neofetch bash-completion; then
+if ! pacstrap -K /mnt base "$kernel" "$microcode" linux-firmware "$kernel"-headers grub rsync efibootmgr sudo vim git fastfetch bash-completion; then
     critical_error "Failed to install base system packages"
 fi
 
