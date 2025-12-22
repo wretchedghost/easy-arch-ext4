@@ -595,6 +595,22 @@ fi
 info_print "Configuring the system (timezone, system clock, initramfs, GRUB)."
 arch-chroot /mnt /bin/bash -e << EOF
 
+    # Export color variables and print functions
+    BOLD='\e[1m'
+    BRED='\e[91m'
+    BBLUE='\e[34m'
+    BGREEN='\e[92m'
+    BYELLOW='\e[93m'
+    RESET='\e[0m'
+
+    info_print () {
+        echo -e "\${BOLD}\${BGREEN}[ \${BYELLOW}•\${BGREEN} ] \$1\${RESET}"
+    }
+
+    error_print () {
+        echo -e "\${BOLD}\${BRED}[ \${BBLUE}•\${BRED} ] \$1\${RESET}"
+    }
+
     # Setting up timezone.
     $(declare -f setup_timezone)
     setup_timezone
