@@ -67,8 +67,6 @@ PACMAN_PKGS=(
     xf86-input-libinput
     picom
     feh
-    redshift
-    lightdm
     lightdm-slick-greeter
 
     # --- Terminal & shell ---
@@ -76,6 +74,7 @@ PACMAN_PKGS=(
     urxvt-perls
     tmux
     bash-completion
+    mosh
 
     # --- Editors ---
     vim
@@ -85,35 +84,48 @@ PACMAN_PKGS=(
     dunst
 
     # --- Fonts ---
+    woff2-font-awesome
     ttf-font-awesome
     ttf-dejavu
+    ttf-dejavu-nerd
+    ttf-monoid
+    ttf-monoid-nerd
+    ttf-hack
+    ttf-hack-nerd
+    ttf-go-nerd
+    ttf-droid
+    ttf-nerd-font-symbols
     noto-fonts
     noto-fonts-emoji
 
     # --- File managers ---
     thunar
-    pcmanfm
+    ranger
 
     # --- Browser ---
     firefox
+    thunderbird
 
     # --- Media / screenshots ---
     scrot
-    vlc
     feh
+    gimp
+    imagemagick
 
     # --- System info / eye candy ---
-    neofetch
+    fastfetch
     conky
 
     # --- Networking ---
     networkmanager
     network-manager-applet
     networkmanager-openvpn
+    openvpn
     tailscale
+    syncthing
 
     # --- Office ---
-    libreoffice-fresh
+    libreoffice-still
 
     # --- Calculator / calendar ---
     galculator
@@ -137,6 +149,8 @@ PACMAN_PKGS=(
     lxappearance
     python
     python-pip
+    powers-profiles-daemon
+    acpi
 )
 
 section_pacman() {
@@ -154,6 +168,7 @@ AUR_PKGS=(
     vimix-cursors
     i3-resurrect
     ttf-monoid
+    autotiling
 )
 
 section_aur() {
@@ -348,7 +363,7 @@ section_user_services() {
 }
 
 # =============================================================================
-#  SECTION 10 — Neofetch Xsession chmod fix
+#  SECTION 10 — 
 # =============================================================================
 section_xsession_fix() {
     if [[ -f /etc/lightdm/Xsession ]]; then
