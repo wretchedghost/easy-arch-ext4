@@ -94,8 +94,8 @@ PACMAN_PKGS=(
     ttf-hack-nerd
     ttf-go-nerd
     ttf-droid
-    ttf-nerd-font-symbols
-    noto-fonts
+    ttf-nerd-fonts-symbols
+    n2oto-fonts
     noto-fonts-emoji
 
     # --- File managers ---
@@ -149,7 +149,7 @@ PACMAN_PKGS=(
     lxappearance
     python
     python-pip
-    powers-profiles-daemon
+    power-profiles-daemon
     acpi
 )
 
