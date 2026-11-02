@@ -95,7 +95,7 @@ PACMAN_PKGS=(
     ttf-go-nerd
     ttf-droid
     ttf-nerd-fonts-symbols
-    n2oto-fonts
+    noto-fonts
     noto-fonts-emoji
 
     # --- File managers ---
