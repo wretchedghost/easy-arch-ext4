@@ -163,9 +163,6 @@ section_pacman() {
 #  SECTION 4 — AUR packages
 # =============================================================================
 AUR_PKGS=(
-    vimix-icon-theme
-    vimix-gtk-themes
-    vimix-cursors
     i3-resurrect
     ttf-monoid
     autotiling
