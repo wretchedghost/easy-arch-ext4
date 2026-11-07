@@ -1,7 +1,17 @@
 #!/usr/bin/env bash
 # =============================================================================
-#  post-install.sh — wretchedghost's Arch Linux post-install setup
+#  post-install.sh — wretchedghost's Arch Linux post-install setup — v1.1
 #  Run this as your normal user (with sudo access) AFTER easy-arch-ext4.sh
+#
+#  Updates the system, installs yay plus pacman/AUR packages, configures the
+#  touchpad, sets up the i3lock-on-sleep service, configures hibernate resume
+#  from /.swapfile with suspend-then-hibernate on lid close, enables services,
+#  and clones/symlinks dotfiles.
+#
+#  v1.1: lid-lock service is Type=simple with ExecStartPost delay so i3lock no
+#        longer blocks sleep, and gets the session D-Bus address for dunstctl;
+#        new hibernate section (resume hook, resume=/resume_offset=, logind and
+#        sleep.conf drop-ins); xautolock added to AUR packages.
 # =============================================================================
 set -euo pipefail
 
@@ -166,6 +176,7 @@ AUR_PKGS=(
     i3-resurrect
     ttf-monoid
     autotiling
+    xautolock
 )
 
 section_aur() {
@@ -210,6 +221,8 @@ SUSPEND_SERVICE="/etc/systemd/system/suspend@${USERNAME}.service"
 
 section_lid_lock() {
     info "Setting up lid-close i3lock suspend service..."
+    local uid
+    uid="$(id -u)"
     sudo tee "$SUSPEND_SERVICE" > /dev/null <<EOF
 [Unit]
 Description=User suspend actions — i3lock on lid close
@@ -217,22 +230,96 @@ Before=sleep.target
 
 [Service]
 User=${USERNAME}
-Type=forking
+Type=simple
 Environment=DISPLAY=:0
-ExecStartPre=/usr/bin/sleep 1
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/${uid}/bus
 ExecStart=/home/${USERNAME}/.config/i3/scripts/lock_and_blur.sh
+ExecStartPost=/usr/bin/sleep 2
 
 [Install]
 WantedBy=sleep.target
 EOF
 
+    sudo systemctl daemon-reload
     sudo systemctl enable "suspend@${USERNAME}.service"
     success "suspend@${USERNAME}.service enabled."
     warn "Make sure ~/.config/i3/scripts/lock_and_blur.sh exists and is chmod +x."
 }
 
 # =============================================================================
-#  SECTION 7 — Enable key systemd services
+#  SECTION 7 — Hibernate resume + suspend-then-hibernate on lid close
+# =============================================================================
+SWAPFILE="/.swapfile"
+HIBERNATE_DELAY="20min"
+
+section_hibernate() {
+    info "Configuring hibernate resume from $SWAPFILE..."
+
+    if [[ ! -f "$SWAPFILE" ]]; then
+        warn "$SWAPFILE not found — skipping hibernate setup."
+        return
+    fi
+
+    # Swap should be at least as large as RAM for reliable hibernation
+    local swap_kb ram_kb
+    swap_kb=$(( $(sudo stat -c %s "$SWAPFILE") / 1024 ))
+    ram_kb=$(awk '/^MemTotal:/ {print $2}' /proc/meminfo)
+    if (( swap_kb < ram_kb )); then
+        warn "Swapfile ($((swap_kb / 1024)) MiB) is smaller than RAM ($((ram_kb / 1024)) MiB) — hibernate may fail."
+    fi
+
+    local rebuild=0
+
+    # resume hook (must come after encrypt)
+    if grep -Eq '^HOOKS=.*\bresume\b' /etc/mkinitcpio.conf; then
+        success "mkinitcpio resume hook already present."
+    elif grep -Eq '^HOOKS=.*\bencrypt\b' /etc/mkinitcpio.conf; then
+        sudo sed -i -E '/^HOOKS=/s/\bencrypt\b/encrypt resume/' /etc/mkinitcpio.conf
+        success "Added resume hook after encrypt."
+        rebuild=1
+    else
+        warn "No 'encrypt' hook in /etc/mkinitcpio.conf — add 'resume' manually."
+    fi
+
+    # resume= and resume_offset= kernel parameters
+    if grep -q 'resume_offset=' /etc/default/grub; then
+        success "GRUB resume parameters already present."
+    else
+        local root_dev offset
+        root_dev=$(findmnt -no SOURCE /)
+        offset=$(sudo filefrag -v "$SWAPFILE" | awk '$1=="0:" {print substr($4, 1, length($4)-2)}')
+        [[ -n "$offset" ]] || die "Could not determine resume_offset for $SWAPFILE."
+        sudo sed -i -E "s|^GRUB_CMDLINE_LINUX=\"(.*)\"|GRUB_CMDLINE_LINUX=\"\1 resume=${root_dev} resume_offset=${offset}\"|" /etc/default/grub
+        success "Added resume=${root_dev} resume_offset=${offset} to GRUB."
+        rebuild=1
+    fi
+
+    if (( rebuild )); then
+        info "Rebuilding initramfs and GRUB config..."
+        sudo mkinitcpio -P
+        sudo grub-mkconfig -o /boot/grub/grub.cfg
+    fi
+
+    # Lid close → suspend, then hibernate after the delay
+    sudo mkdir -p /etc/systemd/logind.conf.d /etc/systemd/sleep.conf.d
+
+    sudo tee /etc/systemd/logind.conf.d/lid.conf > /dev/null <<'EOF'
+[Login]
+HandleLidSwitch=suspend-then-hibernate
+HandleLidSwitchExternalPower=suspend-then-hibernate
+EOF
+
+    sudo tee /etc/systemd/sleep.conf.d/hibernate.conf > /dev/null <<EOF
+[Sleep]
+HibernateDelaySec=${HIBERNATE_DELAY}
+EOF
+
+    success "Lid close set to suspend-then-hibernate (${HIBERNATE_DELAY} delay)."
+    warn "Takes effect after reboot. Test with: systemctl hibernate"
+}
+
+# =============================================================================
+#  SECTION 8 — Enable key systemd services
 # =============================================================================
 section_services() {
     info "Enabling systemd services..."
@@ -254,7 +341,7 @@ section_services() {
 }
 
 # =============================================================================
-#  SECTION 8 — Clone dotfiles and symlink
+#  SECTION 9 — Clone dotfiles and symlink
 # =============================================================================
 section_dotfiles() {
     info "Cloning dotfiles from $DOTFILES_REPO ..."
@@ -337,7 +424,7 @@ section_dotfiles() {
 }
 
 # =============================================================================
-#  SECTION 9 — User systemd timers/services from dotfiles
+#  SECTION 10 — User systemd timers/services from dotfiles
 # =============================================================================
 section_user_services() {
     info "Enabling user systemd units..."
@@ -360,7 +447,7 @@ section_user_services() {
 }
 
 # =============================================================================
-#  SECTION 10 — 
+#  SECTION 11 — LightDM Xsession permissions
 # =============================================================================
 section_xsession_fix() {
     if [[ -f /etc/lightdm/Xsession ]]; then
@@ -392,6 +479,7 @@ run_all() {
     section_aur
     section_touchpad
     section_lid_lock
+    section_hibernate
     section_services
     section_dotfiles
     section_user_services
@@ -407,6 +495,7 @@ run_all() {
     echo "  2. Confirm ~/.config/i3/scripts/lock_and_blur.sh is executable"
     echo "  3. Enable wallpaper rotation: systemctl --user enable --now wallpaper.timer"
     echo "  4. Add noatime to SSD partitions in /etc/fstab if on an SSD"
+    echo "  5. Test hibernate resume: systemctl hibernate"
     echo ""
 }
 
@@ -420,22 +509,24 @@ echo "  4) Install pacman packages only"
 echo "  5) Install AUR packages only"
 echo "  6) Configure touchpad only"
 echo "  7) Setup lid-lock service only"
-echo "  8) Enable systemd services only"
-echo "  9) Clone & symlink dotfiles only"
+echo "  8) Setup hibernate resume + suspend-then-hibernate only"
+echo "  9) Enable systemd services only"
+echo " 10) Clone & symlink dotfiles only"
 echo "  0) Exit"
 echo ""
-read -rp "Choice [0-9]: " CHOICE
+read -rp "Choice [0-10]: " CHOICE
 
 case "$CHOICE" in
-    1) run_all ;;
-    2) section_update ;;
-    3) section_yay ;;
-    4) section_pacman ;;
-    5) section_aur ;;
-    6) section_touchpad ;;
-    7) section_lid_lock ;;
-    8) section_services ;;
-    9) section_dotfiles ;;
-    0) echo "Bye."; exit 0 ;;
-    *) die "Invalid choice." ;;
+    1)  run_all ;;
+    2)  section_update ;;
+    3)  section_yay ;;
+    4)  section_pacman ;;
+    5)  section_aur ;;
+    6)  section_touchpad ;;
+    7)  section_lid_lock ;;
+    8)  section_hibernate ;;
+    9)  section_services ;;
+    10) section_dotfiles ;;
+    0)  echo "Bye."; exit 0 ;;
+    *)  die "Invalid choice." ;;
 esac
